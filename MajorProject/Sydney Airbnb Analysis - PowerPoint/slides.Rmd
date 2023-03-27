@@ -1,0 +1,259 @@
+---
+title: 'STAT1378: Analysis on Sydney Airbnb'
+author: "Manjiri Pendharkar"
+date: "`r Sys.Date()`"
+output: 
+  beamer_presentation:
+    theme: "Boadilla"
+    colortheme: "seahorse"
+    fonttheme: "structurebold"
+classoption: aspectratio=169 
+---
+
+
+# Project Objectives
+
+## Analysis and Visualisation on Sydney Airbnb
+
+::: columns 
+
+:::: column
+
+**Research questions**
+
+-	What factors affect the price of the listing in Sydney?
+- What is the average price per night for renting a listing in Sydney based on the property type?
+ 
+
+::::
+
+:::: column
+```{r airbnbpic, fig.align='center', out.width="90%", echo=FALSE, fig.pos = "h"}
+knitr::include_graphics("pic1.jpg")
+```
+
+::::
+
+:::
+
+
+# Dataset
+
+## Our data
+
+- The data is sourced from the Inside Airbnb website, which hosts publicly available data from the Airbnb site.
+- Link for the Airbnb Sydney dataset <http://insideairbnb.com/get-the-data.html> 
+- The data is in CSV format.
+
+
+# Data Cleaning and Preprocessing
+
+## Data Overview
+
+Number of columns in the original dataset:
+```{r loaddata, echo = FALSE, message=FALSE}
+
+library(tidyverse)
+
+#reading the data and printing the number of columns
+raw_data1 <- read_csv("listings.csv")
+ncol(raw_data1)
+
+```
+
+Columns relevant to our analysis 
+```{r impdata, echo = FALSE, message=FALSE}
+
+raw_data2=raw_data1[, c('neighbourhood_cleansed', 'property_type','room_type','accommodates' ,'bedrooms','beds','price', 'number_of_reviews', 'review_scores_rating')]
+colnames(raw_data2)
+
+
+raw_data3 = raw_data2 %>%
+       filter(property_type %in% c("Entire apartment", "Private room in apartment", "Entire house" ,"Private room in house", "Private room in townhouse", "Entire townhouse", "Room in boutique hotel"))
+                
+
+raw_data4 = raw_data3 %>% filter(neighbourhood_cleansed=="Sydney")
+
+```
+
+## Appropriate datatype - Price 
+
+The **price** attribute is in character format, so we have transformed it to double 
+
+```{r typedata, echo = FALSE, message=FALSE, warning=FALSE}
+
+typeof(raw_data4$price)
+#Since the entries in the price column in the original dataset is a string, we have to remove symbols ( dollar sign, commas ) and then convert it from character to double.
+raw_data5 <- raw_data4 %>% mutate(price =as.double(gsub('[$]','',price)))
+print("to")
+typeof(raw_data5$price)
+
+```
+
+## Dropping null values 
+
+ 
+```{r dropnulldata, echo = FALSE, message=FALSE, warning=FALSE}
+
+print("Count of missing values by column")
+sapply(raw_data5, function(x) sum(is.na(x)))
+
+raw_data6 <- raw_data5 %>% drop_na()
+
+```
+
+## Outliers
+
+::: columns 
+
+:::: column
+
+Records before dropping outliers
+```{r outdata, echo = FALSE, message=FALSE, warning=FALSE}
+
+nrow(raw_data6)
+boxplot(raw_data6$price, ylab="Price of listings in $", col="#b3b3f2")
+
+```
+
+::::
+  
+:::: column
+
+Records after dropping outliers
+```{r dropoutdata, echo = FALSE, message=FALSE, warning=FALSE}
+
+df = raw_data6%>%filter(price<=350)
+nrow(df)
+boxplot(df$price, ylab="Price of listings in $", col="#5d5db0")
+
+```
+
+::::
+  
+:::
+
+
+
+# Data Analysis and Visualisation
+
+
+## Price VS Bedrooms
+
+```{r v1, echo = FALSE, fig.align='center', fig.height=5, fig.width=11}
+
+df %>% 
+  group_by(bedrooms) %>% 
+  summarise(mean_price = mean(price, na.rm = TRUE)) %>% 
+  mutate( typebed=ifelse(bedrooms=="5","Highlighted","Normal")) %>%
+  ggplot(aes(x = reorder(bedrooms, mean_price), y = mean_price, fill = typebed)) +
+  geom_col( color = "black")  +
+  scale_fill_manual(values=c("#5d5db0", "#b3b3f2")) +
+  ggtitle("Bedrooms vs Price", 
+          subtitle = "Price increases with the number of bedrooms in the listing")+
+  xlab("Number of bedrooms") +
+  ylab("Mean price in dollars") +
+  geom_text(aes(label = round(mean_price,digit = 2)), vjust = 2, color = "white", size = 5) +
+  scale_x_discrete(labels=c('1','2','3','4','5','6')) +
+  theme(legend.position = "none")
+
+```
+
+## Price VS Accommodates
+
+```{r v2, echo = FALSE, fig.align='center', fig.height=5, fig.width=11}
+
+df %>% 
+  group_by(accommodates) %>% 
+  summarise(mean_price = mean(price, na.rm = TRUE)) %>% 
+  ggplot(aes(x = accommodates, y = mean_price, group=accommodates)) +
+  geom_point()  +
+  ggtitle("Accomodates vs Price", subtitle = "Price increases with the number of people living in the airbnb")+
+  xlab("Number of accomodates")+ 
+  ylab("Mean price in dollars") 
+```
+
+## Price VS Review Ratings
+
+```{r v3, echo = FALSE, fig.align='center', fig.height=5, fig.width=11}
+
+df %>% 
+  group_by(review_scores_rating) %>% 
+  summarise(mean_price = mean(price, na.rm = TRUE)) %>% 
+  ggplot(aes(x = review_scores_rating, y = mean_price,group=review_scores_rating))   +
+  geom_point() +
+  ggtitle("Review Ratings vs Price", subtitle = "Price does not depend on Review Rating scores of the customers")+
+  xlab("Review Rating Scores")+
+  ylab("Mean price in dollars")
+```
+
+## Price VS Room Types
+
+```{r v4, echo = FALSE, fig.align='center', fig.height=4, fig.width=11}
+
+box1 <- df %>% 
+  # Add a column called 'type': do we want to highlight the group or not?
+  mutate(type=ifelse(room_type=="Entire home/apt","Highlighted","Normal")) %>%
+  ggplot( aes(x=room_type, y=price, fill=type)) + 
+  geom_boxplot() +
+  scale_fill_manual(values=c("#5d5db0", "#b3b3f2")) +
+  theme(legend.position = "none") +
+  ggtitle("Room Type vs Price", 
+          subtitle = "Price for renting entire apartment/house is the hightest") + 
+  ylab("Mean price in dollars")
+box1
+
+```
+
+
+
+## Average Price for different Property Types
+
+```{r v5, echo = FALSE, fig.align='center', fig.height=4, fig.width=11}
+
+df %>% 
+  group_by(property_type) %>% 
+  summarise(mean_price = mean(price, na.rm = TRUE)) %>% 
+  mutate( type1=ifelse(property_type=="Entire house","Highlighted","Normal")) %>%
+  ggplot(aes(x = reorder(property_type, mean_price), y = mean_price, fill = type1)) +
+  geom_col( color = "black") +
+  scale_fill_manual(values=c("#5d5db0", "#b3b3f2")) +
+  labs(x = "Property Type", y = "Price") +
+  geom_text(aes(label = round(mean_price,digit = 2)), vjust = 2, color = "white", size = 5) +
+  ggtitle("Average Price comparison for Property Types", 
+          subtitle = "Entire house has the highest average price ") +
+  xlab("Property Type") + 
+  ylab("Average Price per night in dollars") +
+  theme(legend.position = "none") 
+
+```
+
+## Factors affecting Price
+
+```{r v6, echo = FALSE,message=FALSE, fig.align='center', fig.height=6, fig.width=11}
+library(psych)
+
+coplot= df[, c("price","accommodates" , "bedrooms" ,"beds", 'review_scores_rating'  )]   
+corPlot(coplot, cex = 1.2, alpha = 0.25)
+
+```
+
+# Analysis Conclusion
+
+## Conclusion
+
+1. The correlation and bar plots suggest that factors which affect the price of the listing in Sydney are:
+   - Property type
+   - Room type
+   - Bedrooms
+   - Accommodates
+   - Beds
+   
+2. The bar plot suggests that the average price  for renting an entire hose is the highest among all the listings which approximately $215 per night. . Followed by entire townhouse, and apartment. Also, renting a private room in a boutique hotel costs more than renting a private room in house or an apt.
+
+ 
+
+
+
+
+
