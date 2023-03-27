@@ -1,0 +1,19 @@
+Package: ohwhaley
+Title: Sgta Test package
+Version: 0.0.0.9000
+Authors@R: 
+    person("Manjiri", "Pendharkar", , "manjiri-ramesh.pendharkar@students.mq.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Summon a whale.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Imports: 
+    magrittr
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+URL: https://github.com/manjiri2077/ohwhaley,
+    https://manjiri2077.github.io/ohwhaley/
+BugReports: https://github.com/manjiri2077/ohwhaley/issues
