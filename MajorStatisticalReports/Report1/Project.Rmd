@@ -1,0 +1,536 @@
+---
+title: "STAT1378: Project"
+author: "Manjiri Ramesh Pendharkar"
+date: "`r Sys.Date()`"
+params:
+  file_name: "project2022.csv"
+output: 
+   bookdown::pdf_document2:
+     toc: false
+     number_sections: true
+bibliography: referencelist.bib 
+---
+
+
+# Abstract
+
+The main aim of this report is to conduct an exploratory and statistical tests analysis to see if there is any evidence of a relationship between the variables height, weight, gender and levels of physical activity using `r params$file_name ` dataset containing observations of men and women aged 26-45. Firstly, a linear regression model was used in order to investigate whether a linear relationship exists between height and weight. Secondly, a t-test was utilised in order to do compare mean height of males and females,i.e., to investigate whether gender has an affect on the height. Lastly, a chi-squared test is utilised to delve into whether there is any association between gender and the amount of physical activity. 
+
+The report addresses and summarises the results of the stated research questions by using appropriate statistical tests.
+
+
+# Introduction
+
+In this statistical report, we provide answers to the following research questions:
+
+1. **Is there a linear relationship between height and weight?**\newline
+Linear regression attempts to model the relationship between X = height and Y = weight, by fitting a linear equation to see whether we can predict weight of a person by their height.
+
+
+2. **Is the mean height of male and female the same?**\newline
+In this scenario, we assume equal variances between male and female heights.\newline
+Since we assume equal variances, we have conducted two sample t-test to investigate whether gender has an effect on average heights of males and females. 
+
+3. **Is there any association between gender and the amount of physical activity?**\newline
+The Chi-square test of independence test is used to determine whether gender and the amount of physical activity are likely to be related or not.
+
+
+# Data
+
+In this report, **`r params$file_name `** dataset is used to answer research questions defined above. 
+
+The datset contains observations of men and women aged 26-45 with information on the following variables:
+
+- ID
+- Gender
+- Height (in cm)
+- Weight (in kg)
+- Physical Activity (None, Moderate, Intense)
+
+
+# Methodology
+
+## Linear regresion test to investigate the relationship between height and weight 
+
+According to @stat2012, the analysis of relationship between independent and dependent variable is investigated with the aid of linear regression. We set height as the independent variable (x-axis) and weight as the dependent variable (y-axis).
+
+**Hypothesis**
+
+- Null hypothesis: There is no significant linear relation between height and weight (slope is equal to zero).
+  
+  $H_0: \beta = 0$
+
+- Alternate hypothesis: There is a significant linear relation between height and weight (slope is not equal to zero).
+
+  $H_a: \beta \ne 0$
+
+
+**Assumptions**
+
+@tests2017 states that for linear regression, the following assumptions should be met:
+
+- The relation in the population is linear.\newline
+Scatter plot is used to see whether the relation between the height and weight is linear or not. 
+
+- The residuals (errors) are drawn from a normal distribution.\newline 
+Histogram is used to check if the residuals follow a bell-shaped distribution.
+
+- The residuals have a constant standard deviation.\newline 
+We plot the residuals against the fitted values (i.e., the predicted values). If the residuals have a constant standard deviation, the spread of the residuals around zero  will be constant across the range of the predicted values.
+
+- The two samples are independent and the observations in each sample are independent of each other
+
+
+**‘Least-squares regression line**
+
+
+$$\hat{weight} = a + b*height$$
+
+where a = y-intercept, b = slope of the line
+
+
+**Test statistic** 
+
+$$t = \frac{b}{se_{b}}$$ 
+where b=slope and se= standard error of the slope
+
+**Degrees of freedom**
+
+$$df=n-2$$\newline
+
+**Conducting linear regression test in R**
+
+We can conduct linear regression in R using lm function. We pass the weight as dependent and height as independent variable in the lm function.
+
+**Decision of test**
+
+We observe the p value of the lm test to decide the outcome of the test.
+
+- We reject the null hypothesis if the p value is <= 0.05.
+- We do not reject the null hypothesis if the p value is > 0.05.
+
+
+## Two sample t-test to explore differences in height between males and females
+
+According to @tests2017, the Two sample t-test was used to determine if the means of two sets of data are significantly different from each other or not. The Two sample t-test was conducted to analyze whether the mean height for males and females are same or not. 
+
+
+**Hypothesis**
+
+- Null hypothesis: There is no difference between the average height of males and females.
+  
+  $H_0: \mu_{mh} = \mu_ {fh}$
+
+- Alternate hypothesis: There is a difference between the average height in males and females
+
+  $H_a: \mu_{mh} \ne \mu_{fh}$
+
+
+**Assumptions**
+
+@tests2017 states that for two-sample t-test, the following assumptions should be met:
+
+- The sample means being compared for two populations follow normal distribution.\newline
+Normal Quantile-Quantile plot are used to give us a subjective measure of how closely our data (female heights and male heights) match a Normal distribution. The further the plot is from a straight line, the less confident we are about if our data are Normally distributed.
+
+- The two samples are from populations with equal/same variances.\newline
+Boxplots are used to see if two samples have equal spread or not.
+
+- The two samples are independent and the observations in each sample are independent of each other
+
+
+**Pooled Variance**
+
+According to @r2019, in two sample t-test, we use pooled variance because we 
+assume that the two samples are from populations with equal variances. 
+$$s_p = \sqrt\frac{(n_{mh}-1)s_{mh}^2 + (n_{fh}-1)s_{fh}^2} {n_{mh}+ n_{fh}-2}.$$
+where $n_{mh}$, $n_{fh}$ are the sample size for the two populations and $s_{mh}^2$ & $s_{fh}^2$ are the two sample variances.
+
+**Degrees of freedom**
+
+
+$$df = n_{mh} + n_{fh}$$
+
+
+**Test statistics**
+
+$$t_{obs}=\frac{\bar{x}_{mh} - \bar{x}_{fh}}{s_p\sqrt{1/n_{mh} + 1/n_{fh}}} $$
+where $\overline{x}_{mh}$, $\overline{x}_{fh}$ are the sample mean for the two populations and $s_p$ is the pooled variance.
+
+**Conducting two sample t-test in R**
+
+We can conduct two sample t-test in R using t.test() function. We pass the gender and height to the t.test() function and specify var.equal=TRUE as we assume equal variances between our two populations.
+
+**Decision of test**
+
+We observe the p value of the t-test to decide the outcome of the test.
+
+- We reject the null hypothesis if the p value is <= 0.05.
+- We do not reject the null hypothesis if the p value is > 0.05.
+
+
+## Chi-squared test to investigate the association between the amount of physical activity and gender
+
+According to @r2019, the chi-square test of independence evaluates whether there is an association between the categories of the two variables. The chi-squared test is used to determine whether there is any association between gender and the amount of physical activity.
+
+
+**Hypothesis**
+
+- Null hypothesis: The gender and level of physical activity are independent of each other
+
+- Alternate hypothesis: The levels of physical activity are dependent on gender
+
+
+**Assumptions**
+
+The chi-squared test is only valid if all expected counts are >= 5.
+
+
+**Expected values**
+
+$$E=\frac{row.sum * column.sum}{grand.total}$$
+**Degrees of freedom**
+
+$$df = (rows-1) * (columns-1)$$
+
+**Chi-squared statistics**
+$$\chi^2 = \sum \frac {(O - E)^2}{E}$$
+where O=observed value and E=expected value
+
+**Conducting chi-squared test in R**
+
+We can conduct chi-squared test in R using chisq.test function and pass the below data about gender and amount of phyical activity.
+
+
+**Decision of test**
+
+We observe the p value of the chi-squared to decide the outcome of the test.
+
+- We reject the null hypothesis if the p value is <= 0.05.
+- We do not reject the null hypothesis if the p value is > 0.05.
+
+The dplyr and broom package of @broom2022 and @dp2022 is used in the following section to display the test results.
+
+# Results
+
+
+## Results of Linear regresion test to investigate the relationship between height and weight 
+
+```{r lm, echo=FALSE, message=FALSE, fig.height=6 }
+library(tidyverse)
+library(broom)
+
+
+# State the Null Hypothesis and the Alternative Hypothesis
+lmHypothesis <- function(file_name){
+  data <- read.csv(file_name)
+  cat("The script is going to read the file", file_name, "and perform a linear regression to see 
+  if there is a linear relationship between height and weight.\n\n
+  HYPOTHESIS: \n Null hypothesis is H0 : slope = 0 \n Alternative hypothesis is H1 : slope != 0 \n\n")
+}
+
+
+# Check the linear model assumptions
+lmAssumptions <- function(file_name){
+  cat("ASSUMPTIONS: \n Please check the plots.\n")
+  data <- read.csv(file_name)
+  lm_model=lm(weight~height,data=data)
+  par(mfrow = c(3, 1))
+  plot(data$height, data$weight, main = 'Scatterplot of Weight vs Height', xlab = 'Height', ylab='Weight')
+  plot(lm_model$fitted,lm_model$residuals, main = 'Scatterplot of fitted values vs residuals', xlab = 'Fitted values', ylab='Residual values')
+  hist(lm_model$residuals, main="Histogram of residuals", xlab="Residuals")
+}
+
+
+# Perform the linear regression 
+lmFit <- function(file_name) {
+  data = read_csv(file_name, show_col_types = FALSE)
+  lm_model=lm(weight~height,data=data)
+  return(lm_model)
+}
+
+
+# prints the linear model summary
+lmSummary <- function(fit) {
+  summary_table = tidy(fit)
+  intercept = summary_table$estimate[1]  #intercept
+  slope = summary_table$estimate[2]      #slope value
+  tvalue= summary_table$statistic[2]     #t value 
+  df = glance(fit)$df.residual           #df
+  conflevel= confint(fit)                #confidence interval
+  pvalue = summary_table$p.value[2]
+  cat("LINEAR MODEL SUMMARY REPORT:  \n Estimated Regression line : Weight = ", intercept, " + (", slope," * Height) \n Intercept = ", intercept, "\n Estimated slope = ", slope ,
+             "\n t value = ", tvalue, " \n degree of freedom = ", df, "\n 95% CIs  = ", conflevel[2,1]," , ", conflevel[2,2],  
+             "\n p-value = ", pvalue)
+  
+}
+
+
+# decision of the test, to reject or not to reject the Null Hypothesis, at 5% significance level
+lmDecision <- function(fit){
+  summary_table = tidy(fit)
+  p_value = summary_table$p.value[2]
+  if(p_value < 0.05 ){
+    cat("\n\n DECISION: \n Since the p-value is ", p_value," which is less than 0.05, we reject the null hypothesis.")
+  }
+  else {
+    cat("\n\n DECISION: \n Since the p-value is ", p_value ," which is greater than 0.05, we do not reject the null hypothesis.")
+  }
+}
+
+
+#conclusion to the test
+lmConclusion <- function(fit) {
+  summary_table = tidy(fit)
+  slope = summary_table$estimate[2] #slope value
+  p_value = summary_table$p.value[2]
+  if (p_value > 0.05) {
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ,"\n there is no statistically significant evidence of a linear relationship between the predictor variable Height and the response variable Weight. ")
+  } else if (p_value < 0.05 && slope < 0 ) {
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ," and estimated slope is ", slope, "\n there is a statistically      significant evidence of a negative linear relationship between 
+    the predictor variable Height and the response variable Weight. For each unit-increase in 
+    Height, Weight decreases by", abs(slope))
+  } else {
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ," and estimated slope is ", slope, "\n there is a statistically      significant evidence of a positive linear relationship between 
+    the predictor variable Height and the response variable Weight. For each unit-increase in 
+    Height, Weight increases by", slope)
+  }
+}
+
+
+#prints the entire linear regression report
+lmTests<- function(file_name) {
+  lmHypothesis(file_name)
+  lmAssumptions(file_name)
+  fit <- lmFit(file_name)
+  lmSummary(fit)
+  lmDecision(fit)
+  lmConclusion(fit)
+}
+
+
+lmTests(params$file_name)
+
+```
+
+## Results of Two sample t-test to explore differences in height between males and females
+
+```{r ttest, echo=FALSE, message=FALSE, fig.height=6 }
+library(tidyverse)
+library(broom)
+
+tHypothesis <- function(file_name){
+  data <- read.csv(file_name)
+  cat(" The script is going to read the file", file_name, "and perform two sample t test to see 
+  if the mean height of male and female are same.\n\n
+  HYPOTHESIS: \n Null hypothesis: There is no difference between the average height in males and females.
+ Alternate hypothesis: There is a difference between the average height in males and females \n\n")
+}
+
+# Check the two sample t test assumptions
+tAssumptions <- function(file_name){
+  cat("ASSUMPTIONS: \n Please check the plots.\n")
+  data <- read.csv(file_name)
+  par(mfrow = c(3, 1))
+  boxplot(height ~ gender, data = data, horizontal = TRUE)
+  hMale = data$height[data$gender == "Male"]
+  hFemale = data$height[data$gender == "Female"]
+  qqnorm(hMale , main = "Normal Q-Q plot for Male Heights")
+  qqnorm(hFemale, main = "Normal Q-Q plot for Female Heights")
+}
+
+
+# Perform the linear regression 
+tFit <- function(file_name) {
+  data = read_csv(file_name, show_col_types = FALSE)
+  res <- t.test(height ~ gender, var.equal = TRUE, data = data)
+  return(res)
+}
+
+
+tSummary  <- function(test) {
+  summary_table = tidy(test)
+  t = summary_table$statistic     
+  df = summary_table$parameter           
+  confLow= summary_table$conf.low
+  confHigh= summary_table$conf.high
+  pvalue = summary_table$p.value
+  femaleEst = summary_table$estimate1
+  maleEst = summary_table$estimate2
+  cat("TWO SAMPLE T-TEST SUMMARY REPORT:  \n t statistics = ", t, " \n degree of freedom = ", df, "\n 95% CI= ", confLow," , ", confHigh,  
+             "\n p-value = ", pvalue, "\n Estimated female height = ", femaleEst, "\n Estimated male height = ", maleEst)
+  
+}
+
+
+
+# decision of the test, to reject or not to reject the Null Hypothesis, at 5% significance level
+tDecision <- function(test){
+  summary_table = tidy(test)
+  p_value = summary_table$p.value
+  if(p_value < 0.05 ){
+    cat("\n\n DECISION: \n Since the p-value is ", p_value," which is less than 0.05, we reject the null hypothesis.")
+  }
+  else {
+    cat("\n\n DECISION: \n Since the p-value is ", p_value ," which is greater than 0.05, we do not reject the null hypothesis.")
+  }
+}
+
+
+#conclusion to the test
+tConclusion <- function(test) {
+  summary_table = tidy(test)
+  p_value = summary_table$p.value
+  female_est = summary_table$estimate1
+  male_est = summary_table$estimate2
+  if (p_value > 0.05) {
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ,"\n there is no statistically significant evidence that the mean height of females is different 
+than the mean height of males. ")
+  } else {
+    more_less <- ifelse(female_est > male_est, "more", "less")
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ,"\n there is statistically significant evidence that the        mean height of females
+    is", more_less,"than the mean height of males.\n Estimated female height = ", female_est, "\n Estimated male height     = ", male_est)
+  }
+}
+
+tTests<- function(file_name) {
+  tHypothesis(file_name)
+  tAssumptions(file_name)
+  test <- tFit(file_name)
+  tSummary(test)
+  tDecision(test)
+  tConclusion(test)
+}
+
+tTests(params$file_name)
+
+```
+
+## Results of Chi-squared test to investigate the association between the amount of physical activity and gender
+
+```{r chitest, echo=FALSE, message=FALSE, fig.height=7 }
+library(tidyverse)
+library(broom)
+
+chiHypothesis <- function(file_name){
+  cat("The script is going to read the file", file_name, "and perform chi squared test to see 
+  if there is any association between gender and the amount of physical activity.\n\n", sep=" ")
+  data <- read.csv(file_name)
+  cat("HYPOTHESIS: \n Null hypothesis: The gender and level of physical activity are independent of each other. 
+ Alternate hypothesis: The levels of physical activity are dependent on gender\n\n", sep="")
+}
+
+chiAssumptions <- function(file_name){
+  cat("ASSUMPTIONS: Checking if the expected values are >= 5\n")
+  data <- read.csv(file_name)
+  sub = table(data$phys, data$gender)
+  cat("Expected number of males and females participating in each level of physical activity") 
+  chi_test <- chisq.test(sub)
+  exp <- chi_test$expected
+  print(exp)
+}
+
+# Perform the chi squared  test 
+chiFit <- function(file_name) {
+  data = read_csv(file_name, show_col_types = FALSE)
+  sub = table(data$phys, data$gender)
+  res <- chisq.test(sub)
+  return(res)
+}
+
+chiSummary  <- function(test) {
+  summary_table = tidy(test)
+  x_sq = summary_table$statistic    
+  df = summary_table$parameter           
+  pvalue = summary_table$p.value
+  cat("\n CHI SQUARED TEST SUMMARY REPORT: \n statistics = ", x_sq, " \n degree of freedom = ", df,   
+             "\n p-value = ", pvalue)
+}
+
+# decision of the test, to reject or not to reject the Null Hypothesis, at 5% significance level
+chiDecision <- function(test){
+  summary_table = tidy(test)
+  p_value = summary_table$p.value
+  if(p_value < 0.05 ){
+    cat("\n\n DECISION: \n Since the p-value is ", p_value," which is less than 0.05, we reject the null hypothesis.")
+  }
+  else {
+    cat("\n\n DECISION: \n Since the p-value is ", p_value ," which is greater than 0.05, we do not reject the null hypothesis.")
+  }
+}
+
+#conclusion to the test
+chiConclusion <- function(test) {
+  summary_table = tidy(test)
+  p_value = summary_table$p.value
+  if (p_value > 0.05) {
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ,"\n there is statistically significant evidence that gender and levels of physical activity are
+independent of each other. Meaning that there exists no association between the gender 
+and level of physical activity.")
+  } else {
+    cat("\n\n CONCLUSION: \n As the p-value is ", p_value ,"\n there is statistically significant evidence that gender and levels of physical activity are 
+dependent on each other. Meaning that there is an association between gender and level of physical activity.")
+  }
+}
+
+chiTests<- function(file_name) {
+  chiHypothesis(file_name)
+  chiAssumptions(file_name)
+  test <- chiFit(file_name)
+  chiSummary(test)
+  chiDecision(test)
+  chiConclusion(test)
+}
+
+chiTests(params$file_name)
+
+```
+
+
+# Conclusion
+
+
+## Conclusion of Linear regresion test to investigate the relationship between height and weight 
+
+```{r lmfinalconc, echo=FALSE}
+
+lmFinal<- function(file_name) {
+  fit <- lmFit(file_name)
+  lmConclusion(fit)
+}
+
+
+lmFinal(params$file_name) 
+
+```
+
+## Conclusion of Two sample t-test to explore differences in height between males and females
+
+```{r ttestfinalconc, echo=FALSE}
+
+tFinal<- function(file_name) {
+  fit <- tFit(file_name)
+  tConclusion(fit)
+}
+
+tFinal(params$file_name)
+
+
+
+```
+
+## Conclusion of Chi-squared test to investigate the association between the amount of physical activity and gender
+
+```{r chifinalconc, echo=FALSE}
+
+chiFinal<- function(file_name) {
+  fit <- chiFit(file_name)
+  chiConclusion(fit)
+}
+
+chiFinal(params$file_name)
+
+
+```
+
+# References
