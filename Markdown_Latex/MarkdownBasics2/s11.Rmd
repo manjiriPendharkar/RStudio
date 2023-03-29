@@ -1,0 +1,73 @@
+---
+title: "STAT1378 SGTA Week 11 R Markdown Example"
+output:
+  bookdown::pdf_document2:
+    toc: FALSE
+---
+
+# Images
+
+Let's include a preview of the cheatsheet we mentioned before (you can find it [here](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)).
+
+```{r cheatsheet, fig.align='center', out.width="80%", fig.cap = "RMarkdown cheatsheet", echo=FALSE, fig.pos = "h"}
+knitr::include_graphics("cheatsheet.png")
+```
+
+# Tables
+
+Tables could be generated using `kable()` or `kbl()`. Short table can also be created within `R` by using `tibble::tribble`.
+
+```{r kbl-example, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(kableExtra)
+dat <- tribble(~ `First Header`, ~ `Second Header`,
+               "Content Cell 1", "Content Cell 2",
+               "Content Cell 3", "Content Cell 4")
+dat %>% 
+  kbl(booktabs = TRUE, caption = "kable example") %>% 
+  kable_styling(position = "center", latex_options = "hold_position")
+```
+And see Table \@ref(tab:kbl-example)
+
+```{r k, echo=FALSE, message=FALSE}
+library(knitr)
+library(kableExtra)
+dt <- mtcars[1:5, 1:6]
+dt
+
+kbl(mtcars[1:8, 1:4], booktabs = T, linesep = "")
+
+kbl(dt, booktabs = T) %>%
+kable_styling() %>%
+add_header_above(c(" " = 1, "Group 1" = 2,
+"Group 2" = 2, "Group 3" = 2))
+
+
+```
+
+# Cross-referencing
+
+We are going to typeset the following as an example. Most cross-referencing are obtained with `\@ref()`.
+   
+Let $\mu_t = \hat{y}_t = l_{t-1} + b_{t-1}$ denote the one-step forecast of $y_t$ assuming we know the values of all parameters. Also let $\epsilon_t= y_t -\mu_t$ denote the one-step forecast error at time $t$. Then
+\begin{equation}
+y_t = l_{t-1} + b_{t-1} + \epsilon_t, (\#eq:eq1)
+\end{equation}
+
+and so we can write
+
+\begin{align}
+l_t &= l_{t-1}+b_{t-1}+\alpha\epsilon_t (\#eq:eq2)\\
+b_t &= b_{t-1} + \beta^* \left(l_t - l_{t-1} - b_{t-1}\right) = b_{t-1} + \alpha\beta^* \epsilon_t. (\#eq:eq3)
+\end{align}
+
+We simplify the last expression by setting $\beta = \alpha \beta^*$. The three equations above, i.e. Equations \@ref(eq:eq1)--\@ref(eq:eq3), constitute a state space model underlying Holt’s method. The model is fully specified once we state the distribution of the error term $\epsilon_t$. Usually we assume that these are independent and identically distributed, following a Gaussian distribution with mean 0 and variance $\sigma^2$, which we write as $\epsilon_t \sim NID(0, \sigma^2)$.
+  
+On a completely unrelated note, you can cross-reference to figures and tables as Figure \@ref(fig:cheatsheet) and Table \@ref(tab:kbl-example).
+
+We simplify the last expression by setting $\beta = \alpha \beta^*$. The three equations above, i.e. Equations \@ref(eq:eq1)--\@ref(eq:eq3), constitute a state space model underlying Holt’s method. The model is fully specified once we state the distribution of the error term $\epsilon_t$. Usually we assume that these are independent and identically distributed, following a Gaussian distribution with mean 0 and variance $\sigma^2$, which we write as $\epsilon_t \sim NID(0, \sigma^2)$.
+
+
+```{r f1, fig.align='center', out.width="80%", fig.cap = "This", echo=FALSE, fig.pos = "h"}
+knitr::include_graphics("SGTA10_Figure_3.png")
+```
