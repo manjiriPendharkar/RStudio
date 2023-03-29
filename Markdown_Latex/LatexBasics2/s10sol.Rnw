@@ -1,0 +1,146 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+\newcommand{\half}{\frac{1}{2}}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\section{Exercise 1}
+
+\subsection{Unordered list}
+
+Units that I taught recently
+
+\begin{itemize}
+\item STAT1371
+\item STAT2170/6180
+\item STAT1378
+\item STAT7111/8111
+\end{itemize}
+
+\subsection{Ordered list}
+
+My Top 10 list of Final Fantasy Game
+
+\begin{enumerate}
+\item FFIV
+\item FFVI
+\item FFX
+\item FFVII
+\item FFXII
+\item FFV
+\item FFIV
+\item FFXIII
+\item FFXV
+\item FFVIII
+\end{enumerate}
+
+\section{Exercise 2}
+
+<<>>=
+ans <- 1/(-tan(acos(sqrt(2)/2)-4*atan(1/5)))
+@
+
+\[
+        \left[-\tan\left(\arccos\left(\frac{\sqrt{2}}{2}\right) - 4\arctan\left(\frac{1}{5}\right)\right)\right]^{-1} = \Sexpr{ans}.
+\]
+
+\section{Exercise 3}
+
+\begin{align*}
+\frac{-b \pm \sqrt{b^2-4ab}}{2a}\\
+e^{i\pi} + 1 = 0 \\
+\frac{1}{\sigma\sqrt{2\pi}} \int^{\infty}_{-\infty}
+e^{-\frac{1}{2}\left(x-\mu\right)^2/\sigma^2}\,\mathrm{d}x = 1\\
+\int^{\sqrt[3]{3}}_1 z^2 \, \mathrm{d}z \times \cos\left(\frac{3\pi}{9}\right) = \log\left(\sqrt[3]{e}\right)
+\end{align*}
+
+\section{Exercise 4}
+
+$\half$. 
+
+\section{Exercise 5}
+
+ Let $\mu_t = \hat{y}_t = l_{t-1} + b_{t-1}$ denote the one-step forecast of $y_t$ assuming we know the values of all parameters. Also let $\epsilon_t= y_t -\mu_t$ denote the one-step forecast error at time $t$. Then
+\begin{equation}
+y_t = l_{t-1} + b_{t-1} + \epsilon_t,
+\end{equation}
+and so we can write
+\begin{align}
+l_t &= l_{t-1}+b_{t-1}+\alpha\epsilon_t\\
+b_t &= b_{t-1} + \beta^* \left(l_t - l_{t-1} - b_{t-1}\right) = b_{t-1} + \alpha\beta^* \epsilon_t.
+\end{align}
+
+  We simplify the last expression by setting $\beta = \alpha \beta^*$. The three equations above constitute a state space model underlying Holt’s method. The model is fully specified once we state the distribution of the error term $\epsilon_t$. Usually we assume that these are independent and identically distributed, following a Gaussian distribution with mean 0 and variance $\sigma^2$, which we write as $\epsilon_t \sim NID(0, \sigma^2)$.
+
+\section{Exercise 6}
+
+\begin{enumerate}[label = \alph*)]
+\item 
+\begin{center}
+\includegraphics[width=0.9\textwidth]{SGTA10_Figure_1.png}
+\end{center}
+
+\item 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{SGTA10_Figure_2.png}
+\end{center}
+\caption{This is the second step in the instructions to extract a BibTeX reference from Google Scholar.}\label{StepTwo}
+\end{figure}
+
+\item 
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{SGTA10_Figure_3.png}
+\end{center}
+\caption{This is the third and final step in the instructions to extract a BibTeX reference from Google Scholar. It follows from the second step, given in Figure \ref{StepTwo}.}\label{StepThree}
+\end{figure}
+
+\end{enumerate}
+
+\section{Exercise 7}
+
+\begin{center}
+	\begin{tabular}{| l || c |}\hline
+	Mark for Part 1 (/15) & 13 \\\hline
+	Mark for Part 2 (/15) & 12 \\\hline
+	Mark for LaTeX Checklist (/5) & 5  \\
+	\hline\hline
+	Total (/35) & 30 \\\hline
+	\end{tabular}
+	\end{center}
+	
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ccccccc} \hline 
+& & \multicolumn{2}{c}{$\alpha = 0.5$} & & \multicolumn{2}{c}{$\alpha = 0.8$}\\
+\cline{3-4} \cline{6-7}
+& $h$ & $\gamma_1$ & $\gamma_2$ & & $\gamma_1$ & $\gamma_2$\\ \hline
+$\sigma = 0.05$ & 1 & 0.15 & 0.04 & & 0.15 & 0.04\\ 
+& 5 & 0.21 & 0.08 & & 0.28 & 0.14 \\
+& 10 & 0.27 & 0.13 & & 0.39 & 0.28 \\
+$\sigma = 0.10$ & 1 & 0.30 & 0.16 & & 0.30 & 0.16\\
+& 5 & 0.43 & 0.33 & & 0.58 & 0.60 \\
+& 10 & 0.55 & 0.55 & & 0.81 & 1.19 \\ \hline
+\end{tabular}
+\caption{Example 2}
+\end{center}
+\end{table}
+
+\section{Exercise 8}
+
+Once you have these articles, write a nonsense paragraph that uses \texttt{\textbackslash cite} to reference each of them, and include a bibliography at the end of your document. In this case, I've reused the \texttt{bib} file from Topic 9 and cited an article \cite{lustri2018nanoptera}, a book \cite{boas2006mathematical}, and a package \cite{mpcmp}. The list of references is located at the end of this worksheet. Notice that you may have to step in adjust the Google Scholar output so that the information are presented consistently, such as the author names use only first initials and that the journal names and article titles (eg. Fourier-Kochin) are capitalised correctly.
+
+
+
+\bibliographystyle{plain}
+\bibliography{referencelist.bib}
+
+
+\end{document}
