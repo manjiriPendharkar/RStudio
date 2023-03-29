@@ -1,0 +1,130 @@
+---
+title: "Untitled"
+author: "Manjiri Pendharkar"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# How to write in Markdown
+
+## Basics
+
+Markdown does not control the typography of your document like Microsoft Word and similar software do. How a document looks can still be controlled (e.g., using css file - don't worry about this), but that part is outsourced, and not Markdown's problem. 
+Markdown controls everything that deals with the structure of a document, like headers, lists, bold and italic text, links, images, block quotes.
+
+### Headers
+
+The headers' hierarchy (i.e., title, section, subsection, etc.) can be controlled in a couple of ways. I will offer here my personal favourite: the number of "#" at the beginning of a line determines the hierarchy of the header. Typically, # comes before a title, ## is for sections, ### for subsections, and so on. If a line starts without any "#" characters, it's the body of the document.
+You can read the linked resources for more ways to have headers in a document, and can use the one you prefer.
+
+### Body of a document
+
+The body of a document can just be typed in.
+
+In Markdown, a new paragraph is created by skipping a line, while manual line breaks by ending a line with two or more spaces:
+
+Roses are red,  
+Violets are blue.
+
+Unlike Word, it is not enough to simply press return.
+
+If you need to type words in *italic* or **bold**, you use one or two "*" around the words or the sentences you want in italic or in bold.
+
+You can also have block quotes, using the ">" character at the beginning of a new line. This is useful for quotations, like in:
+
+> It's always better to give
+> than to receive.
+
+### Lists
+
+Lists can be started with a "*" or a "-":
+  
+* first item
+  - first subitem
+  - second subitem
+* second item
+  * first subitem
+  * Second subitem
+  * third subitem
+
+List can also be numbered lists:
+
+1. first numbered item
+    1. first subitem
+    2. second subitem
+2. second numbered item
+  
+### Links and images
+
+Let's include a preview of the cheatsheet we mentioned before (you can find it [here](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf)).
+
+
+#### LaTeX equations
+
+Writing equations is essential in any statistical report and that's one of the reasons why academics use LaTeX. This should work better as part of the LaTeX discussion. Stay tune!
+
+#### Horizontal rules
+
+This is easy. Just use three or more asterisks to obtain the line as below:
+
+*****
+
+
+#### Tables
+
+Tables could be generated following the spirit of Markdown, i.e. in a way that is easy to read from the source file like in the following:
+
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
+
+The idea is similar to `tribble()` which is useful for small tables of data where readability is important. This is difficult to maintain though (try adding a column!). Instead, we will use R Markdown for that, creating tables out of data frame/tibble. We will circle back to this point in the coming weeks.
+
+#### Footnotes
+
+Footnotes allow you to add notes and references without cluttering the body of the document. When you create a footnote, a superscript number with a link appears where you added the footnote reference. Readers can click the link to jump to the content of the footnote at the bottom of the page.
+
+Here's a simple footnote,[^1] and here's a longer one.[^bignote]
+
+[^1]: This is the first footnote.
+
+[^bignote]: Here's one with multiple paragraphs and code.
+
+    Indent paragraphs to include them in the footnote.
+
+    `{ my code }`
+
+    Add as many paragraphs as you like.
+
+
+#### Superscripts & Subscripts
+
+* Markdown supports superscripts but not for subscripts but there are few tricks that we can use depends on what your output format is. This is only relevant for the standard text. In equations, we can use the better LaTeX syntax.*
+
+      
+superscript^2^  
+or  
+superscript<sup>2</sup>  
+or 
+superscript$^2$
+  
+subcript<sub>2</sub>  
+or 
+subcript$_2$
+
+* Some of these obviously is just plan html code so they only work for html output; Others are LaTeX code and so only work for pdf output.*
+
+*Again, this is only relevant for the standard text. In equations, we can use the better LaTeX syntax.*
+
+
+#### Strikethrough text
+
+This is actually useful when you want to delete a part of your document that could be useless in the future.
+~~strikethrough~~
+
+Restoring it is a matter of seconds (just delete the "~" characters).
