@@ -1,0 +1,103 @@
+---
+title: "SGTA12"
+author: MANJIRI
+date: March 22, 2005
+output: beamer_presentation
+theme: "Warsaw"
+colortheme: "seahorse"
+fonttheme: "structurebold"
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+---
+
+--- 
+
+- You can create a slide show broken up into sections by using the # and ## heading tags 
+- You can also create a new slide without a header using a horizontal rule (`---`).
+
+
+# In the morning
+
+## Getting up
+
+
+1. Turn off alarm
+2. Get out of bed
+
+## Breakfast
+
+- Eat eggs
+- Drink coffee
+
+# In the evening
+
+## Dinner
+
+- Eat spaghetti
+- Drink wine
+
+
+## cars
+
+```{r, cars, fig.cap="A scatterplot.", echo=FALSE}
+plot(cars)
+```
+
+## Going to sleep
+
+- Get in bed
+- Count sheep
+
+
+## Images
+
+```{r cheatsheet, fig.align='center', out.width="80%", fig.cap = "RMarkdown cheatsheet", echo=FALSE, fig.pos = "h"}
+knitr::include_graphics("cheatsheet.png")
+```
+
+## Tables
+
+- Tables could be generated using `kable()` or `kbl()`. Short table can also be created within `R` by using `tibble::tribble`.
+
+```{r kbl-example, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(kableExtra)
+dat <- tribble(~ `First Header`, ~ `Second Header`,
+               "Content Cell 1", "Content Cell 2",
+               "Content Cell 3", "Content Cell 4")
+dat %>% 
+  kbl(booktabs = TRUE, caption = "kable example", format = "latex") %>% 
+  kable_styling(position = "center", latex_options = "hold_position")
+```
+- Notice that `kableExtra` may not be able to load all \LaTeX\ packages as in a `pdf_document`/`pdf_document2` output format and you may have to add that in yourselves.
+
+## Mathematics
+
+- Standalone equation.
+\[
+\frac{-b\pm\sqrt{b^2-4ac}}{2a}
+\]
+
+- In an aligned environment.
+$$
+\begin{aligned}
+e^{i\pi} + 1 &= 0 \\
+\frac{1}{\sigma\sqrt{2\pi}} \int^{\infty}_{-\infty}
+e^{-\frac{1}{2}\left(x-\mu\right)^2/\sigma^2}\,\mathrm{d}x &= 1\\
+\int^{\sqrt[3]{3}}_1 z^2 \, \mathrm{d}z \times \cos\left(\frac{3\pi}{9}\right) &= \log\left(\sqrt[3]{e}\right)
+\end{aligned}
+$$
+
