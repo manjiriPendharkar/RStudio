@@ -1,0 +1,239 @@
+---
+title: "COMP1378 Assignment_2"
+author: "Manjiri Ramesh Pendharkar - 45933219"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+
+
+In this exercise, we are going to compare two methods used in comparing the
+mean of two independent populations - two-sample t-test and Welch's t-test.
+
+
+## Two-sample t-test
+
+The two-sample t-test is used to determine if the means of two sets of data are significantly different from each other or not \cite{stat2012}.
+
+For two-sample t-test \cite{stest2017}, the following assumptions should be met:
+
+- The sample means being compared for two populations follow normal distribution. 
+- The two samples are from populations with equal/same variances.
+ 
+
+We will use the below example for illustration purposes.
+
+Let A1 denote a set obtained by drawing a random sample of six measurements:
+
+A1 = {30.02, 29.99, 30.11, 29.97, 30.01, 29.99}
+
+and let A2 denote a second set obtained similarly:
+
+A2 = {29.89, 29.93, 29.97, 29.98, 30.02, 29.98}
+
+A1 and A2 are the weights of screws that were produced by two different machines. \newline
+
+**Descriptive statistics of A1 and A2**
+
+Sample   | Sample size | Mean                     |Std                 |
+---------| ------------|--------------------------|--------------------|
+A1       | $n_{A1} = 6$|$\bar{x}_{A1} = 30.015$   |$s_{A1} = 0.049699$ |
+A2       | $n_{A2} = 6$|$\bar{x}_{A1} = 29.96167$ |$s_{A2} = 0.04535$  |
+
+
+**Hypothesis**
+
+- Null hypothesis: There is no difference between the average weights of screws produced by two different machines A1 and A2.
+  
+  $H_0: \mu_{A1} = \mu_ {A2}$
+
+
+- Alternate hypothesis, Ha: There is a difference between the average weights of screws produced by two different machines A1 and A2
+
+  $H_a: \mu_{A1} \ne \mu_{A2}$
+
+
+**Pooled Variance**
+
+In two sample t-test, we use pooled variance because we 
+assume that the two samples are from populations with equal variances \cite{stest2017}. 
+$$s_p = \sqrt\frac{(n_{A1}-1)s_{A1}^2 + (n_{A2}-1)s_{A2}^2} {n_{A1}+ n_{A2}-2}.$$
+$$s_p = \sqrt\frac{(6-1)0.049699^2 + (6-1)0.04535^2} {6+ 6-2} = 0.0475741$$
+
+**Test statistics and degrees of freedom**
+
+$df = n_{A2} + n_{A2} - 2 = 6 + 6 -2 = 10$
+
+$$t_{obs}=\frac{\bar{x}_{A1} - \bar{x}_{A2}}{s_p\sqrt{1/n_{A1} + 1/n_{A2}}} \sim t_{10}.$$
+$$t_{obs}=\frac{30.015 - 29.96167}{0.0475741\sqrt{1/6 + 1/6}} = 1.941608$$
+**Critical value**
+
+The critical value can be manually extracted using the statistical table where df=10 at 5% significance level or qt() function from r package can be used. 
+$$t_{crit} = 2.228$$
+```{r tcrit, include=FALSE}
+
+t_crit = qt(1-0.05/2 , 10)
+glue::glue("t_crit = " , t_crit)
+```
+
+
+**P value**
+
+P value can be calculated using pt() function from r by specifying t statistics and df.
+$$p-value = 0.08085294$$ 
+```{r tp, include=FALSE}
+
+p_value = 2*pt(q=1.9417, df=10, lower.tail=FALSE)
+glue::glue("p_value = " , p_value)
+```
+
+**Confidence intervals**
+
+At 5% significance level
+$$CI = \bar{x}_{A1} - \bar{x}_{A2} \pm t{crit} * {s_p\sqrt{1/n_{A1} + 1/n_{A2}}}$$
+$$CI = 30.015 - 29.96167\pm 2.228 * {0.0475741\sqrt{1/6 + 1/6}} = (-0.007866298,  0.1145263)$$\newline
+
+
+**Conducting two sample t-test in R**
+
+We can conduct two sample t-test in R using t.test() function. We can pass the A1 and A2 sets and specify var.equal=TRUE as we assume equal variances between our two populations.
+
+The below output shows the result of two sample t-test in R.
+
+```{r ttest, echo=FALSE}
+
+A1 = c(30.02, 29.99, 30.11, 29.97, 30.01, 29.99)
+A2 = c(29.89, 29.93, 29.97, 29.98, 30.02, 29.98)
+t.test(A1, A2, var.equal = TRUE)
+```
+**Comparing manually vs r calculated two sample t-test results**
+
+We can see from above sections, that the manually vs r calculated two sample t-test results are similar, where $$t_{obs} = 1.9417, df = 10, p-value = 0.08085, CI = (-0.007867,0.1145)$$
+
+
+**Decision of two sample t-test**
+
+At significance level of 0.05, we fail to reject the null hypothesis because p-value is = 0.08085, which is not less than 0.05.
+
+**Conclusion of two sample t-test**
+
+There is no statistically significant evidence to suggest that average weights of screws produced by machine A1 differs from screws produced by machine A2. 
+
+
+## Welsh t-test
+
+The Welsh t-test is used to determine if the means of two sets of data are significantly different from each other or not \cite{r2019}. However, Welch's t-test is designed for unequal population variances, i.e. used when the assumption that the two populations have equal variances seems unreasonable \cite{r2019}.
+
+When the two samples do not assume same variance like in two-sample t-test, we use Welsh t-test\cite{stest2017}.
+
+For Welsh t-test, the following assumption should be met \cite{stest2017}:
+
+- The sample means being compared for two populations follow normal distribution.
+
+We will use the same above example for illustration purposes where A1 and A2 are the weights of screws that were produced by two different machines.
+
+A1 = {30.02, 29.99, 30.11, 29.97, 30.01, 29.99}
+A2 = {29.89, 29.93, 29.97, 29.98, 30.02, 29.98}\newline
+
+
+**Hypothesis**
+
+- Null hypothesis: There is no difference between the average weights of screws produced by two different machines A1 and A2.
+  
+  $H_0: \mu_{A1} = \mu_ {A2}$
+
+
+- Alternate hypothesis, Ha: There is a difference between the average weights of screws produced by two different machines A1 and A2
+
+  $H_a: \mu_{A1} \ne \mu_{A2}$
+
+
+**Test statistics and degrees of freedom**
+
+$$t=\frac{\bar{x}_{A1} - \bar{x}_{A2}}{\sqrt{s_{A1}^2/n_{A1} + s_{A2}^2/n_{A2}}}$$
+$$t=\frac{30.015 - 29.96167}{\sqrt{0.049699^2/6 + 0.04535^2/6}} = 1.941603$$
+
+\begin{equation*}
+df=
+\frac{
+  \left(\dfrac{s_{A1}^{2}}{n_{A1}}+\dfrac{s_{A2}^{2}}{n_{A2}}\right)^{\!2}
+}{
+  \dfrac{(s_{A1}^{2}/n^{}_{A1})^2}{n_{A1}-1}+
+  \dfrac{(s_{A2}^{2}/n^{}_{A2})^2}{n_{A2}-1}
+}
+\end{equation*}
+
+\begin{equation*}
+df=
+\frac{
+  \left(\dfrac{0.049699^{2}}{6}+\dfrac{0.04535^{2}}{6}\right)^{\!2}
+}{
+  \dfrac{(0.049699^{2}/6^{})^2}{6-1}+
+  \dfrac{(0.04535^{2}/6^{})^2}{6-1}
+}
+= 9.917297
+\end{equation*}
+
+
+**Critical value**
+
+The critical value can be manually extracted using the statistical table where df=10 at 5% significance level or qt() function from r package can be used.
+$$t_{crit} = 2.262$$
+```{r wcrit, include=FALSE}
+
+t_crit = qt(1-0.05/2 , 9)
+glue::glue("t_crit = " , t_crit)
+```
+
+**P value**
+
+P value can be calculated using pt() function from r by specifying t statistics and df.
+$$p - value = 0.08110804$$
+```{r wp, include=FALSE}
+
+p_value = 2*2*pt(q=1.941603, df=9.917297, lower.tail=FALSE)
+glue::glue("p_value = " , p_value)
+```
+
+**Confidence intervals**
+
+At 5% significance level
+$$CI = \bar{x}_{A1} - \bar{x}_{A2} \pm t{crit} * {\sqrt{s_{A1}/n_{A1} + s_{A2}/n_{A2}}}$$
+$$CI = 30.015 - 29.96167\pm 2.262 * {\sqrt{0.049699^2/6 + 0.04535^2/6}} = -0.008800331,  0.1154603$$\newline
+
+
+**Conducting Welsh's t-test in R**
+
+We can conduct Welch's t-test in R using t.test() function. We can pass the A1 and A2 sets and specify var.equal=FALSE as we do not assume equal variances between our two populations.
+
+The below output shows the result of Welsh's t-test in R.
+
+```{r welshtest, echo=FALSE}
+
+A1 = c(30.02, 29.99, 30.11, 29.97, 30.01, 29.99)
+A2 = c(29.89, 29.93, 29.97, 29.98, 30.02, 29.98)
+t.test(A1, A2)
+```
+
+**Comparing manually vs r calculated Welsh's t-test results**
+
+We can see from above sections, that the manually vs r calculated Welsh'st-test results are similar, where $$t_{obs} = 1.9417, df = 9.9173, p-value = 0.0811, CI = ( -0.008, 0.115)$$
+
+**Decision of Welsh's t test**
+
+At significance level of 0.05, we fail to reject the null hypothesis because p-value is = 0.0811, which is not less than 0.05.
+
+**Conclusion of Welsh's t test**
+
+There is no statistically significant evidence to suggest that average weights of screws produced by machine A1 differs from screws produced by machine A2.
+
+
+
+
+The dplyr package is used in this section\cite{dp2022}.
+
+
+\bibliographystyle{plain}
+\bibliography{referencelist.bib}
+
