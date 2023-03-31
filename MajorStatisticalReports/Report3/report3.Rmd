@@ -1,0 +1,155 @@
+---
+title: "COMP1378 Assignment_2"
+author: "Manjiri Ramesh Pendharkar - 45933219"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+## Investigating the below statement
+
+Welsh t-test’s Wikipedia page states that, “For unequal variances, Student’s t-test gave a
+low p-value when the smaller sample had a larger variance and a high p-value when the larger sample
+had a larger variance. For unequal variances, Welch’s t-test gave p-values close to simulated p-values.”
+by checking the rejection proportion against pre-specified significance level.
+
+
+**Simulation study** 
+
+We have generated 10,000 samples in 3 different settings. For each setting, we have simulated samples from the appropriate normal distributions and ran both the two-sample t-test and the Welsh’s t-test and collected their p-values.
+
+– Setting 1 (equal sample sizes, unequal but near variances): 
+$$\mu_1 = 20, \mu_2 = 22, \sigma_1^2= 7.9,\sigma_2^2= 3.8, N_1 = N_2 = 15$$
+– Setting 2 (unequal sample sizes, unequal variances, smaller sample has the larger variance):
+$$\mu_1 = 20, \mu_2 = 22, \sigma_1^2= 9.0,\sigma_2^2= 0.9, N_1 = 10, N_2 = 20$$
+– Setting 3 (unequal sample sizes, unequal variances, larger sample has the larger variance):
+$$\mu_1 = 20, \mu_2 = 22, \sigma_1^2= 1.4,\sigma_2^2= 17.1, N_1 = 10, N_2 = 20$$
+
+We have compared the rejection proportion based on three significance levels: 10%, 5% and 1%. \newline
+
+
+**At 10% significance level**
+
+```{r tensig, echo=FALSE}
+
+library(broom) 
+
+t_test1 = t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359),var.equal=TRUE, conf.level = 0.90)$p.value
+t_test2 = t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833),var.equal=TRUE, conf.level = 0.90)$p.value
+t_test3 = t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215),var.equal=TRUE, conf.level = 0.90)$p.value
+
+ts_test1 = replicate(10000,t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359),var.equal=TRUE, conf.level = 0.90)$p.value)
+ts_test2 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833),var.equal=TRUE, conf.level = 0.90)$p.value)
+ts_test3 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215),var.equal=TRUE, conf.level = 0.90)$p.value)
+
+
+w_test1 = t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359), conf.level = 0.90)$p.value
+w_test2 = t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833), conf.level = 0.90)$p.value
+w_test3 = t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215), conf.level = 0.90)$p.value
+
+ws_test1 = replicate(10000,t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359), conf.level = 0.90)$p.value)
+ws_test2 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833), conf.level = 0.90)$p.value)
+ws_test3 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215), conf.level = 0.90)$p.value)
+
+dat = data.frame(
+  Setting = c('Setting 1','Setting 2', 'Setting 3'),
+  Student_p = c(t_test1, t_test2, t_test3),
+  Student_p_sim = c(mean(ts_test1), mean(ts_test2), mean(ts_test3)),
+  Welch_p = c(w_test1, w_test2, w_test3),
+  Welch_p_sim = c(mean(ws_test1), mean(ws_test2), mean(ws_test3))
+)
+dat
+```
+From the above output, we can see that the result at 10% significance level agrees with the statement, “For unequal variances, Student’s t-test gave a low p-value when the smaller sample had a larger variance and a high p-value when the larger sample had a larger variance."
+However, for unequal variances, Welch’s t-test gave p-values different to simulated p-values.\newline
+
+
+**At 5% significance level**
+
+```{r fivesig, echo=FALSE}
+
+t_test1 = t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359),var.equal=TRUE)$p.value
+t_test2 = t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833),var.equal=TRUE)$p.value
+t_test3 = t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215),var.equal=TRUE)$p.value
+
+ts_test1 = replicate(10000,t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359),var.equal=TRUE)$p.value)
+ts_test2 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833),var.equal=TRUE)$p.value)
+ts_test3 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215),var.equal=TRUE)$p.value)
+
+
+w_test1 = t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359))$p.value
+w_test2 = t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833))$p.value
+w_test3 = t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215))$p.value
+
+ws_test1 = replicate(10000,t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359))$p.value)
+ws_test2 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833))$p.value)
+ws_test3 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215))$p.value)
+
+dat = data.frame(
+  Setting = c('Setting 1','Setting 2', 'Setting 3'),
+  Student_p = c(t_test1, t_test2, t_test3),
+  Student_p_sim = c(mean(ts_test1), mean(ts_test2), mean(ts_test3)),
+  Welch_p = c(w_test1, w_test2, w_test3),
+  Welch_p_sim = c(mean(ws_test1), mean(ws_test2), mean(ws_test3))
+)
+dat
+```
+From the above output, we can see that the result at 5% significance level agrees with the statement, “For unequal variances, Student’s t-test gave a low p-value when the smaller sample had a larger variance and a high p-value when the larger sample had a larger variance."
+However, for unequal variances, Welch’s t-test gave p-values different to simulated p-values.\newline
+
+**At 1% significance level**
+
+```{r onesig, echo=FALSE}
+
+t_test1 = t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359),var.equal=TRUE, conf.level = 0.99)$p.value
+t_test2 = t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833),var.equal=TRUE, conf.level = 0.99)$p.value
+t_test3 = t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215),var.equal=TRUE, conf.level = 0.99)$p.value
+
+ts_test1 = replicate(10000,t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359),var.equal=TRUE, conf.level = 0.99)$p.value)
+ts_test2 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833),var.equal=TRUE, conf.level = 0.99)$p.value)
+ts_test3 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215),var.equal=TRUE, conf.level = 0.99)$p.value)
+
+
+w_test1 = t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359), conf.level = 0.99)$p.value
+w_test2 = t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833), conf.level = 0.99)$p.value
+w_test3 = t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215), conf.level = 0.99)$p.value
+
+ws_test1 = replicate(10000,t.test(rnorm(15, mean = 20, sd = 2.810694), rnorm(15, mean = 22, sd = 1.949359), conf.level = 0.99)$p.value)
+ws_test2 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 3), rnorm(20, mean = 22, sd = 0.9486833), conf.level = 0.99)$p.value)
+ws_test3 = replicate(10000,t.test(rnorm(10, mean = 20, sd = 1.183216), rnorm(20, mean = 22, sd = 4.135215), conf.level = 0.99)$p.value)
+
+dat = data.frame(
+  Setting = c('Setting 1','Setting 2', 'Setting 3'),
+  Student_p = c(t_test1, t_test2, t_test3),
+  Student_p_sim = c(mean(ts_test1), mean(ts_test2), mean(ts_test3)),
+  Welch_p= c(w_test1, w_test2, w_test3),
+  Welch_p_sim = c(mean(ws_test1), mean(ws_test2), mean(ws_test3))
+)
+dat
+```
+From the above output, we can see that the result at 1% significance level does not agree with the statement from the Welsh t-test’s Wikipedia page.
+As for unequal variances, Student’s t-test gave a  high p-value when the smaller sample had a larger variance and a low p-value when the larger sample had a larger variance.For unequal variances, Welch’s t-test gave p-values different to simulated p-values.\newline
+
+**Comparing the rejection proportion based on three significance levels:10%, 5% and 1%**
+
+At 10% significance level,
+
+- Student's t-test: For Setting 2, we reject the null hypothesis but not for Setting 1 and 3
+- Welch's test: For Setting 1 and 2, we reject the null hypothesis but not for Setting  3
+
+At 5% significance level,
+
+- Student's t-test: For Setting 2, we reject the null hypothesis but not for Setting 1 and 3
+- Welch's test: For Setting 1 and 2, we reject the null hypothesis but not for Setting 3
+
+At 1% significance level, 
+
+- Student's t-test: For Setting 1 and 2, we reject the null hypothesis but not for Setting 3
+- Welch's test: For Setting 1, we reject the null hypothesis but not for Setting 2 and 3
+
+
+The dplyr package is used in this section\cite{dp2022}.
+
+
+\bibliographystyle{plain}
+\bibliography{referencelist.bib}
+
